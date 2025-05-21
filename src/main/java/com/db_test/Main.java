@@ -2,6 +2,9 @@ package com.db_test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -28,9 +31,30 @@ public class Main {
         return con;
     }
 
+    private ArrayList<Office> report1(Connection con) {
+        ArrayList<Office> al = new ArrayList<>();
+
+        try {
+            PreparedStatement ps = con.prepareStatement("SELECT officeCode, state, city FROM offices");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Office of = new Office(rs.getInt(1), rs.getString(2), rs.getString(3));
+                al.add(of);
+            }
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return al;
+    }
+
     public static void main(String[] args) {
         Main m = new Main();
         Connection con = m.get_DB_Connection();
+
+        ArrayList<Office> al = m.report1(con);
+        System.out.println(al);
 
         try {
             if (con != null) {
